@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SQUADBot</title>
+    <link rel="shortcut icon" type="image/png" href="./robot.png"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"/>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+    <script src="response.js" defer></script>
+    <script type="module" src="app.js" defer></script>
+  </head>
+  <body>
+    <header><h1 >Formation Bot <i style="font-size:40px" class="fa">&#xf0e6;</i></h1></header>
+    <div class="boot">
+      
+    </div>
+    <div class="container collapse">
+      <div class="chat-header">
+        <div class="logo">
+          <img src="images/lg2.png" alt="cwt" />
+        </div>
+        <div class="title">Let's chat </div>
+      </div>
+      <div class="chat-body">
+        <div class="loading hide">
+          <div class="circles circle-1"></div>
+          <div class="circles circle-2"></div>
+          <div class="circles circle-3"></div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <div class="input-sec">
+          <input type="text" id="txtInput" placeholder="Type here"  />
+        </div>
+        <div class="send">
+          <img src="images/send.svg" alt="send" />  
+        </div>
+        <img src="images/voice.svg" onclick="startButton(event)" alt="send" /> 
+        
+        
+      </div>
+      <footer>
+        All rights reserved, SIR FSTG. 
+    </footer>
+    </div>
+    
+  </body>
+</html>
+
+<script>
+  let aiapi = "g8VSoJy8yrZx";
+
+  window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+  let finalTranscript = '';
+ 
+  let recognition = new window.SpeechRecognition();
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 10;
+  recognition.continuous = true;
+  recognition.onresult = (event) => {
+    let interimTranscript = '';
+    for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
+      let transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += transcript;
+
+          document.querySelector("#txtInput").value = transcript;
+          
+
+
+        async function fetchText() {
+        let response = await fetch('https://api.pgamerx.com/v4/ai?message='+transcript, {
+          method: "GET",
+          headers: {"x-api-key": aiapi}
+        });
+        let data = await response.text();          
+        let voiceout = JSON.parse(data);
+        console.log(voiceout[0]);
+        document.getElementById("show").innerHTML = "Robot :"+ voiceout[0].message;
+       responsiveVoice.speak(voiceout[0].message, "UK English Male");
+}
+fetchText();
+
+       
+    }
+  } 
+}
+  
+
+  function startButton(event) {
+
+  recognition.start();
+
+}
+
+recognition.start();
+</script>
